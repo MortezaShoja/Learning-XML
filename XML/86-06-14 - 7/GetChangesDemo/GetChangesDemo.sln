@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "GetChangesDemo", "GetChangesDemo.vbproj", "{67B342B0-1AC6-4E7D-8B77-73A3A9AF4858}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EventLoger", "..\EventLoger\EventLoger.vbproj", "{D1B14C92-97E7-4BAF-A082-629C754D8CF1}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NewSource", "..\NewSource\NewSource.vbproj", "{2F24D56B-4F67-49C3-B2AB-983B963BE6B2}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{67B342B0-1AC6-4E7D-8B77-73A3A9AF4858}.Debug.ActiveCfg = Debug|.NET
+		{67B342B0-1AC6-4E7D-8B77-73A3A9AF4858}.Debug.Build.0 = Debug|.NET
+		{67B342B0-1AC6-4E7D-8B77-73A3A9AF4858}.Release.ActiveCfg = Release|.NET
+		{67B342B0-1AC6-4E7D-8B77-73A3A9AF4858}.Release.Build.0 = Release|.NET
+		{D1B14C92-97E7-4BAF-A082-629C754D8CF1}.Debug.ActiveCfg = Debug|.NET
+		{D1B14C92-97E7-4BAF-A082-629C754D8CF1}.Debug.Build.0 = Debug|.NET
+		{D1B14C92-97E7-4BAF-A082-629C754D8CF1}.Release.ActiveCfg = Release|.NET
+		{D1B14C92-97E7-4BAF-A082-629C754D8CF1}.Release.Build.0 = Release|.NET
+		{2F24D56B-4F67-49C3-B2AB-983B963BE6B2}.Debug.ActiveCfg = Debug|.NET
+		{2F24D56B-4F67-49C3-B2AB-983B963BE6B2}.Debug.Build.0 = Debug|.NET
+		{2F24D56B-4F67-49C3-B2AB-983B963BE6B2}.Release.ActiveCfg = Release|.NET
+		{2F24D56B-4F67-49C3-B2AB-983B963BE6B2}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

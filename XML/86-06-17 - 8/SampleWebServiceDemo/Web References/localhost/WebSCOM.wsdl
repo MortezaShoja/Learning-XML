@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://localhost/WebSCOM/WebSCOM" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://localhost/WebSCOM/WebSCOM" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://localhost/WebSCOM/WebSCOM">
+      <s:element name="HelloWorld">
+        <s:complexType />
+      </s:element>
+      <s:element name="HelloWorldResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="HelloWorldResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="HelloWorldSoapIn">
+    <part name="parameters" element="s0:HelloWorld" />
+  </message>
+  <message name="HelloWorldSoapOut">
+    <part name="parameters" element="s0:HelloWorldResponse" />
+  </message>
+  <portType name="WebSCOMSoap">
+    <operation name="HelloWorld">
+      <input message="s0:HelloWorldSoapIn" />
+      <output message="s0:HelloWorldSoapOut" />
+    </operation>
+  </portType>
+  <binding name="WebSCOMSoap" type="s0:WebSCOMSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="HelloWorld">
+      <soap:operation soapAction="http://localhost/WebSCOM/WebSCOM/HelloWorld" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="WebSCOM">
+    <port name="WebSCOMSoap" binding="s0:WebSCOMSoap">
+      <soap:address location="http://localhost/WebSCOM/WebSCOM.asmx" />
+    </port>
+  </service>
+</definitions>

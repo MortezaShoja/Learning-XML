@@ -1,0 +1,272 @@
+
+public interface ICustomerManager
+{
+   Customer getCustomer(int id);
+}
+
+
+[Serializable]
+public class Customer
+{
+   public String FirstName;
+   public String LastName;
+   public DateTime DateOfBirth;
+
+   public Customer()
+   {
+      Console.WriteLine("Customer.constructor: Object created");
+   }
+
+   public int getAge()
+   {
+      Console.WriteLine("Customer.getAge(): Calculating age of {0}, " +
+         "born on {1}.",
+         FirstName,
+         DateOfBirth.ToShortDateString());
+
+      TimeSpan tmp = DateTime.Today.Subtract(DateOfBirth);
+      return tmp.Days / 365; // rough estimation
+   }
+}
+
+
+
+using System.Runtime.Remoting;
+using General;
+using System.Runtime.Remoting.Channels;
+using System.Runtime.Remoting.Channels.Http;
+
+As described previously, you will have to implement ICustomerManager in an object derived from MarshalByRefObject. The getCustomer() method will just return a dummy Customer object:
+
+class CustomerManager: MarshalByRefObject, ICustomerManager
+{
+   public CustomerManager()
+   {
+      Console.WriteLine("CustomerManager.constructor: Object created");
+   }
+
+   public Customer getCustomer(int id)
+   {
+      Console.WriteLine("CustomerManager.getCustomer): Called");
+      Customer tmp = new Customer();
+      tmp.FirstName = "John";
+      tmp.LastName = "Doe";
+      tmp.DateOfBirth = new DateTime(1970,7,4);
+      Console.WriteLine("CustomerManager.getCustomer(): Returning " +
+                           "Customer-Object");
+      return tmp;
+   }
+}
+
+It still looks more or less the same as a "conventional" nonremoting class would—the only difference is that it doesn't inherit directly from Object, but from MarshalByRefObject.
+
+Now let's have a look at the server startup code. This is a very basic variant of registering a server-side object. It doesn't yet use a configuration file, but the server's parameters are hard coded in void Main().
+
+class ServerStartup
+{
+   static void Main(string[] args)
+   {
+      HttpChannel chnl = new HttpChannel(1234);
+      ChannelServices.RegisterChannel(chnl);
+      RemotingConfiguration.RegisterWellKnownServiceType(
+                                     typeof(CustomerManager),
+                                     "CustomerManager.soap",
+                                     WellKnownObjectMode.Singleton);
+
+      // the server will keep running until keypress.
+      Console.ReadLine();
+   }
+}
+
+Now take a closer look at the startup sequence of the server:
+
+HttpChannel chnl = new HttpChannel(1234);
+
+A new HTTP channel (System.Runtime.Remoting.Channels.Http.HttpChannel) is created and configured to listen on port 1234. The default transfer format for HTTP is SOAP.
+
+ChannelServices.RegisterChannel(chnl);
+
+The channel is registered in the remoting system. This will allow incoming requests to be forwarded to the corresponding objects.
+
+
+RemotingConfiguration.RegisterWellKnownServiceType(
+        typeof(CustomerManager),
+        "CustomerManager.soap",
+        WellKnownObjectMode.Singleton);
+
+The class CustomerManager is registered as a WellKnownServiceType (a MarshalByRefObject). The URL will be CustomerManager.soap—whereas this can be any string you like, the extension .soap or .rem should be used for consistency. This is absolutely necessary when hosting the components in IIS as it maps these two extensions to the .NET Remoting Framework (as shown in Chapter 4).
+
+The object's mode is set to Singleton to ensure that only one instance will exist at any given time.
+
+Console.ReadLine();
+
+This last line is not directly a part of the startup sequence but just prevents the program from exiting while the server is running. You can now compile and start this server.
+
+ Note  If you look closely at the startup sequence, you'll notice that the registered class is not directly bound to the channel. In fact, you'd be right in thinking that all available channels can be used to access all registered objects.
+ 
+
+Implementing the Client
+The sample client will connect to the server and ask for a Customer object. For the client (which will be a console application in this example) you also need to add a reference to System.Runtime.Remoting.dll and the compiled General.dll from the preceding step (you will again have to use the Browse button, because you didn't copy the assembly to the GAC). The same using statements are needed as for the server:
+
+using System.Runtime.Remoting;
+using General;
+using System;
+using System.Runtime.Remoting.Channels.Http;
+using System.Runtime.Remoting.Channels;
+
+The void Main() method will register a channel, contact the server to acquire a Customer object, and print a customer's age.
+
+class Client
+{
+   static void Main(string[] args)
+   {
+     HttpChannel channel = new HttpChannel();
+     ChannelServices.RegisterChannel(channel);
+
+
+     ICustomerManager mgr = (ICustomerManager) Activator.GetObject(
+        typeof(ICustomerManager),
+        "http://localhost:1234/CustomerManager.soap");
+      Console.WriteLine("Client.Main(): Reference to CustomerManager acquired");
+
+     Customer cust = mgr.getCustomer(4711);
+     int age = cust.getAge();
+      Console.WriteLine("Client.Main(): Customer {0} {1} is {2} years old.",
+         cust.FirstName,
+         cust.LastName,
+         age);
+
+      Console.ReadLine();
+   }
+}
+
+Now let's take a detailed look at the client:
+
+HttpChannel channel = new HttpChannel();
+ChannelServices.RegisterChannel(channel);
+
+With these two lines, the HTTP channel is registered on the client. It is not necessary to specify a port number here, because the client-side TCP port will be assigned automatically.
+
+ICustomerManager mgr = (ICustomerManager) Activator.GetObject(
+         typeof(ICustomerManager),
+         "http://localhost:1234/CustomerManager.soap");
+
+This line creates a local proxy object that will support the interface ICustomerManager.
+
+Let's examine the call to Activator.GetObject a little closer:
+
+Activator.GetObject(typeof(ICustomerManager),
+                       "http://localhost:1234/CustomerManager.soap");
+
+Instead of using the new operator, you have to let the Activator create an object. You need to specify the class or interface of the object—in this case, ICustomerManager—and the URL to the server. This is not necessary when using configuration files, because in that situation the new operator will know which classes will be remotely instantiated and will show the corresponding behavior.
+
+In this example, the Activator will create a proxy object on the client side (or in reality two proxies—more on this later) but will not yet contact the server.
+
+Customer cust = mgr.getCustomer(4711);
+
+The getCustomer() method is executed on the TransparentProxy object. Now the first connection to the server is made and a message is transferred that will trigger the execution of getCustomer() on the server-side Singleton object CustomerManager. You can verify this because you included a Console.WriteLine() statement in the server's getCustomer() code. This line will be written into the server's console window.
+
+The server now creates a Customer object and fills it with data. When the method returns, this object will be serialized and all public and private properties converted to an XML fragment. This XML document is encapsulated in a SOAP return message and transferred back to the client. The .NET Remoting Framework on the client now implicitly generates a new Customer object on the client and fills it with the serialized data that has been received from the server.
+
+The client now has an exact copy of the Customer object that has been created on the server; there is no difference between a normal locally generated object and this serialized and deserialized one. All methods will be executed directly in the client's context! This can easily be seen in Figure 2-2, which shows the included WriteLine() statement in the Customer object's getAge() method that will be output to the client's console window. Figure 2-3 shows the corresponding output of the server application.
+
+ 
+Figure 2-2: Client output for first sample 
+ 
+Figure 2-3: Server output for the first sample 
+Extending the Sample
+Quite commonly, data has to be validated against several business rules. It's very convenient and maintainable to place this validation code on a central server. To allow validation of Customer data, you will extend the ICustomerManager interface to include a validate() method. This method will take a Customer object as a parameter and return another object by value. This returned object contains the status of the validation and explanatory text. As a sample business rule, you will check if the customer has been assigned a first name and last name and is between 0 and 120 years old.
+
+General Assembly
+In the General assembly extend the interface ICustomerManager to include the method validate().
+
+public interface ICustomerManager
+{
+   Customer getCustomer(int id);
+   ValidationResult validate (Customer cust);
+}
+
+The ValidationResult is defined as follows. It will be a serializable (transfer by value) object with a constructor to set the necessary values.
+
+[Serializable]
+public class ValidationResult
+{
+   public ValidationResult (bool ok, String msg)
+   {
+      Console.WriteLine("ValidationResult.ctor: Object created");
+      this.Ok = ok;
+      this.ValidationMessage = msg;
+   }
+
+   public bool Ok;
+   public String ValidationMessage;
+}
+
+Server
+On the server, you have to provide an implementation of the mentioned business rule:
+
+public ValidationResult validate(Customer cust)
+{
+   int age = cust.getAge();
+   Console.WriteLine("CustomerManager.validate() for {0} aged {1}",
+                         cust.FirstName, age);
+   if ((cust.FirstName == null) || (cust.FirstName.Length == 0))
+   {
+      return new ValidationResult(false,"Firstname missing");
+   }
+
+   if ((cust.LastName == null) || (cust.LastName.Length == 0))
+   {
+      return new ValidationResult(false, "Lastname missing");
+   }
+
+   if (age < 0 || age > 120)
+   {
+      return new ValidationResult(false,"Customer must be " +
+      "younger than 120 years");
+   }
+   return new ValidationResult(true,"Validation succeeded");
+}
+
+This function just checks the given criteria and returns a corresponding ValidationResult object, which contains the state of the validation (success/failure) and some explanatory text.
+
+Client
+To run this sample, you also have to change the client to create a new Customer object and let the server validate it.
+
+static void Main(string[] args)
+{
+   HttpChannel channel = new HttpChannel();
+   ChannelServices.RegisterChannel(channel);
+
+   ICustomerManager mgr = (ICustomerManager) Activator.GetObject(
+      typeof(ICustomerManager),
+      "http://localhost:1234/CustomerManager.soap");
+   Console.WriteLine("Client.main(): Reference to rem. object acquired");
+
+   Console.WriteLine("Client.main(): Creating customer");
+   Customer cust = new Customer();
+   cust.FirstName = "Joe";
+   cust.LastName = "Smith";
+   cust.DateOfBirth = new DateTime(1800,5,12);
+
+   Console.WriteLine("Client.main(): Will call validate");
+   ValidationResult res = mgr.validate (cust);
+   Console.WriteLine("Client.main(): Validation finished");
+   Console.WriteLine("Validation result for {0} {1}\n-> {2}: {3}",
+                         cust.FirstName, cust.LastName,res.Ok.ToString(),
+                         res.ValidationMessage);
+   Console.ReadLine();
+}
+
+As you can see in Figure 2-4, the Customer object is created in the client's context and then passed to the server as a parameter of validate(). Behind the scenes the same thing happens as when getCustomer() is called in the previous example: the Customer object will be serialized and transferred to the server, which will in turn create an exact copy.
+
+ 
+Figure 2-4: Client's output when validating a customer 
+This copied object is used for validation against the defined business rules. When looking at the server's output in Figure 2-5, you will see that CustomerManager.Validate() and Customer.getAge() are executed on the server. The returned ValidationResult is serialized and transferred to the client.
+
+ 
+Figure 2-5: Server's output while validating a customer 
+[2]Called so because every object of this kind has to extend System.MarshalByRefObject.
+
+
+    

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:s0="http://localhost/WData/wdata" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" targetNamespace="http://localhost/WData/wdata" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://localhost/WData/wdata">
+      <s:import namespace="http://www.w3.org/2001/XMLSchema" />
+      <s:element name="GetDataSet">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="c" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDataSetResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDataSetResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </types>
+  <message name="GetDataSetSoapIn">
+    <part name="parameters" element="s0:GetDataSet" />
+  </message>
+  <message name="GetDataSetSoapOut">
+    <part name="parameters" element="s0:GetDataSetResponse" />
+  </message>
+  <portType name="WdataSoap">
+    <operation name="GetDataSet">
+      <input message="s0:GetDataSetSoapIn" />
+      <output message="s0:GetDataSetSoapOut" />
+    </operation>
+  </portType>
+  <binding name="WdataSoap" type="s0:WdataSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document" />
+    <operation name="GetDataSet">
+      <soap:operation soapAction="http://localhost/WData/wdata/GetDataSet" style="document" />
+      <input>
+        <soap:body use="literal" />
+      </input>
+      <output>
+        <soap:body use="literal" />
+      </output>
+    </operation>
+  </binding>
+  <service name="Wdata">
+    <port name="WdataSoap" binding="s0:WdataSoap">
+      <soap:address location="http://192.168.1.8/wdata/WDATA.asmx" />
+    </port>
+  </service>
+</definitions>

@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "RemotingServiceGeneral", "RemotingServiceGeneral.vbproj", "{CF7BA54C-37AB-40E8-AC7A-25EB031C24CE}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "EmployeesService", "..\EmployeesService\EmployeesService.vbproj", "{54E6D304-6DE8-4CFA-A4FF-F8B95A2DBF47}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Client", "..\Client\Client.vbproj", "{368289EA-3760-4243-8EAE-59C2B7373709}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{CF7BA54C-37AB-40E8-AC7A-25EB031C24CE}.Debug.ActiveCfg = Debug|.NET
+		{CF7BA54C-37AB-40E8-AC7A-25EB031C24CE}.Debug.Build.0 = Debug|.NET
+		{CF7BA54C-37AB-40E8-AC7A-25EB031C24CE}.Release.ActiveCfg = Release|.NET
+		{CF7BA54C-37AB-40E8-AC7A-25EB031C24CE}.Release.Build.0 = Release|.NET
+		{54E6D304-6DE8-4CFA-A4FF-F8B95A2DBF47}.Debug.ActiveCfg = Debug|.NET
+		{54E6D304-6DE8-4CFA-A4FF-F8B95A2DBF47}.Debug.Build.0 = Debug|.NET
+		{54E6D304-6DE8-4CFA-A4FF-F8B95A2DBF47}.Release.ActiveCfg = Release|.NET
+		{54E6D304-6DE8-4CFA-A4FF-F8B95A2DBF47}.Release.Build.0 = Release|.NET
+		{368289EA-3760-4243-8EAE-59C2B7373709}.Debug.ActiveCfg = Debug|.NET
+		{368289EA-3760-4243-8EAE-59C2B7373709}.Debug.Build.0 = Debug|.NET
+		{368289EA-3760-4243-8EAE-59C2B7373709}.Release.ActiveCfg = Release|.NET
+		{368289EA-3760-4243-8EAE-59C2B7373709}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

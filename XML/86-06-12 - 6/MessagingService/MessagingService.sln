@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MessagingService", "MessagingService.vbproj", "{B58E4B34-D927-4ADE-A0A1-97148AF36DC1}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "MessageClient", "..\MessageClient\MessageClient.vbproj", "{05EB6A46-EA19-456A-9900-18DD82B15359}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B58E4B34-D927-4ADE-A0A1-97148AF36DC1}.Debug.ActiveCfg = Debug|.NET
+		{B58E4B34-D927-4ADE-A0A1-97148AF36DC1}.Debug.Build.0 = Debug|.NET
+		{B58E4B34-D927-4ADE-A0A1-97148AF36DC1}.Release.ActiveCfg = Release|.NET
+		{B58E4B34-D927-4ADE-A0A1-97148AF36DC1}.Release.Build.0 = Release|.NET
+		{05EB6A46-EA19-456A-9900-18DD82B15359}.Debug.ActiveCfg = Debug|.NET
+		{05EB6A46-EA19-456A-9900-18DD82B15359}.Debug.Build.0 = Debug|.NET
+		{05EB6A46-EA19-456A-9900-18DD82B15359}.Release.ActiveCfg = Release|.NET
+		{05EB6A46-EA19-456A-9900-18DD82B15359}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
